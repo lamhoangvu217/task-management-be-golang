@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lamhoangvu217/task-management-be-golang/constants"
 	"github.com/lamhoangvu217/task-management-be-golang/models"
 	"strconv"
 	"time"
@@ -49,4 +50,12 @@ func ParseJwt(cookie string) (models.User, error) {
 		}
 	}
 	return userInfo, nil
+}
+
+func IsValidTaskStatus(status string) bool {
+	return status == constants.TaskStatusTodo || status == constants.TaskStatusDoing || status == constants.TaskStatusDone
+}
+
+func IsValidTaskPriority(priority string) bool {
+	return priority == constants.TaskPriorityLow || priority == constants.TaskPriorityMedium || priority == constants.TaskPriorityHigh
 }

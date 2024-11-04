@@ -6,9 +6,11 @@ import (
 	"github.com/lamhoangvu217/task-management-be-golang/database"
 	"github.com/lamhoangvu217/task-management-be-golang/models"
 	"github.com/lamhoangvu217/task-management-be-golang/services"
+	"github.com/lamhoangvu217/task-management-be-golang/utils"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func GetTasksByUserId(c *fiber.Ctx) error {
@@ -41,7 +43,21 @@ func CreateTask(c *fiber.Ctx) error {
 			"error": "Invalid input data",
 		})
 	}
+	if !utils.IsValidTaskStatus(task.Status) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "task status is invalid",
+		})
+	}
+	if !utils.IsValidTaskPriority(task.Priority) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "task priority is invalid",
+		})
+	}
 	task.UserID = userId
+	task.CreatedAt = time.Now()
+	task.UpdatedAt = time.Now()
+	task.DueDate = time.Now()
+
 	createdTask, err := services.CreateTask(task)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -68,25 +84,18 @@ func DeleteTask(c *fiber.Ctx) error {
 			"error": "invalid task id",
 		})
 	}
-	var task models.Task
-	if err := database.DB.First(&task, taskId).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := services.DeleteTask(uint(taskId)); err != nil {
+		if err.Error() == "task id not found" {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": "task id not found",
+				"error": err.Error(),
 			})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "could not retrieve product",
-		})
-	}
-
-	if err := services.DeleteTask(&task, uint(taskId)); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "failed to delete task",
+			"error": err.Error(),
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message": "delete task successfully",
+		"message": "task and all associated subtasks deleted successfully",
 	})
 }
 
@@ -122,18 +131,35 @@ func UpdateTask(c *fiber.Ctx) error {
 			"error": "Invalid request body",
 		})
 	}
-	if updateTaskData.Title == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "title is required",
-		})
+	if updateTaskData.Title != "" {
+		task.Title = updateTaskData.Title
 	}
-	task.Title = updateTaskData.Title
-	task.Description = updateTaskData.Description
-	task.Status = updateTaskData.Status
-	task.Priority = updateTaskData.Priority
-	task.DueDate = updateTaskData.DueDate
-	task.CreatedAt = updateTaskData.CreatedAt
-	task.UpdatedAt = updateTaskData.UpdatedAt
+	if updateTaskData.Description != "" {
+		task.Description = updateTaskData.Description
+	}
+	if updateTaskData.Status != "" {
+		if !utils.IsValidTaskStatus(task.Status) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "task status is invalid",
+			})
+		}
+		task.Status = updateTaskData.Status
+	}
+	if updateTaskData.Priority != "" {
+		if !utils.IsValidTaskPriority(task.Priority) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "task priority is invalid",
+			})
+		}
+		task.Priority = updateTaskData.Priority
+	}
+	if !updateTaskData.DueDate.IsZero() {
+		task.DueDate = updateTaskData.DueDate
+	}
+
+	// Update the `UpdatedAt` field to the current time
+	task.UpdatedAt = time.Now()
+
 	if err := services.UpdateTask(&task); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),

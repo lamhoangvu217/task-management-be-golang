@@ -18,4 +18,9 @@ func Setup(app *fiber.App) {
 	authorizedApp.Post("/task", controllers.CreateTask)
 	authorizedApp.Delete("/task/:id", controllers.DeleteTask)
 	authorizedApp.Put("/task/:id", controllers.UpdateTask)
+
+	authorizedApp.Get("/subtasks", controllers.GetSubtaskByTask)
+	authorizedApp.Post("/subtask", controllers.CreateSubtask)
+	authorizedApp.Delete("/subtask/:id", controllers.DeleteSubtask)
+	authorizedApp.Put("/subtask/:id", controllers.UpdateSubtask)
 }
