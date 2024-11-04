@@ -23,4 +23,14 @@ func Setup(app *fiber.App) {
 	authorizedApp.Post("/subtask", controllers.CreateSubtask)
 	authorizedApp.Delete("/subtask/:id", controllers.DeleteSubtask)
 	authorizedApp.Put("/subtask/:id", controllers.UpdateSubtask)
+
+	authorizedApp.Post("/label", controllers.CreateLabel)
+	authorizedApp.Get("/labels", controllers.GetAllLabels)
+	authorizedApp.Post("/assign-label", controllers.AssignLabelToTask)
+	authorizedApp.Post("/remove-assign-label", controllers.RemoveLabelFromTask)
+	authorizedApp.Delete("/label/:id", controllers.DeleteLabel)
+
+	authorizedApp.Post("/comment", controllers.CreateComment)
+	authorizedApp.Get("/comments", controllers.GetCommentByUser)
+	authorizedApp.Delete("/comment/:id", controllers.DeleteComment)
 }

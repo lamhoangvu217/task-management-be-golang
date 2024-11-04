@@ -13,6 +13,11 @@ import (
 	"time"
 )
 
+type AssignLabelRequest struct {
+	TaskID  uint `json:"task_id" validate:"required"`
+	LabelID uint `json:"label_id" validate:"required"`
+}
+
 func GetTasksByUserId(c *fiber.Ctx) error {
 	// Extract categoryId from query parameters
 	userId := c.Locals("userId").(uint)
@@ -170,4 +175,49 @@ func UpdateTask(c *fiber.Ctx) error {
 		"message": "Task updated successfully",
 		"task":    task,
 	})
+}
+
+func AssignLabelToTask(c *fiber.Ctx) error {
+	var req AssignLabelRequest
+	// Parse the JSON body
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	}
+	// Find the task
+	var task = models.Task{}
+	if err := database.DB.First(&task, req.TaskID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Task not found"})
+	}
+	// Find the label
+	var label models.Label
+	if err := database.DB.First(&label, req.LabelID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Label not found"})
+	}
+	// Associate the label with the task
+	if err := database.DB.Model(&task).Association("Labels").Append(&label); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to assign label to task"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Label assigned to task successfully"})
+}
+
+func RemoveLabelFromTask(c *fiber.Ctx) error {
+	var req AssignLabelRequest
+	// Parse the JSON body
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	}
+	// Find the task
+	var task = models.Task{}
+	if err := database.DB.First(&task, req.TaskID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Task not found"})
+	}
+	// Find the label
+	var label models.Label
+	if err := database.DB.First(&label, req.LabelID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Label not found"})
+	}
+	if err := database.DB.Model(&task).Association("Labels").Delete(&label); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to remove association label from task"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Remove association label from task successfully"})
 }

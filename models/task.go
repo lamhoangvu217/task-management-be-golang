@@ -11,7 +11,9 @@ type Task struct {
 	DueDate     time.Time `json:"dueDate"`
 	UserID      uint      `gorm:"not null" json:"userId"`
 	User        User      `gorm:"foreignKey:UserID" json:"-"`
-	Labels      []Label   `gorm:"many2many:task_labels;" json:"labels"`
+	Subtasks    []Subtask `json:"-"`
+	Labels      []Label   `gorm:"many2many:task_labels;" json:"-"`
+	Comments    []Comment `json:"-"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }

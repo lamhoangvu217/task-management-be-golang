@@ -54,6 +54,12 @@ func DeleteTask(taskId uint) error {
 		return errors.New("failed to delete subtasks")
 	}
 
+	// Clear the association between the label and tasks
+	if err := tx.Model(task).Association("Labels").Clear(); err != nil {
+		tx.Rollback()
+		return errors.New("failed to remove association between the label and tasks")
+	}
+
 	// Delete the task itself
 	if err := tx.Delete(&task).Error; err != nil {
 		tx.Rollback()
