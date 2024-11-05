@@ -16,8 +16,10 @@ func Setup(app *fiber.App) {
 	authorizedApp := app.Group("/app", middlewares.AuthRequired)
 
 	authorizedApp.Post("/project", controllers.CreateProject)
+	authorizedApp.Get("/projects", controllers.GetProjectByUserId)
+	authorizedApp.Post("/add-collaborator", controllers.AddCollaboratorToProject)
 
-	authorizedApp.Get("/tasks", controllers.GetTasksByUserId)
+	authorizedApp.Get("/tasks", controllers.GetTasksByProject)
 	authorizedApp.Post("/task", controllers.CreateTask)
 	authorizedApp.Delete("/task/:id", controllers.DeleteTask)
 	authorizedApp.Put("/task/:id", controllers.UpdateTask)

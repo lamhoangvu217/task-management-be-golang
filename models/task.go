@@ -12,7 +12,7 @@ type Task struct {
 	Subtasks    []Subtask `json:"-"`
 	Labels      []Label   `gorm:"many2many:task_labels;" json:"-"`
 	Comments    []Comment `json:"-"`
-	ProjectID   uint      `json:"project_id"`
+	ProjectID   uint      `gorm:"not null" json:"projectId"`
 	Project     Project   `gorm:"foreignKey:ProjectID"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`

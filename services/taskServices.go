@@ -7,9 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetTasksByUserId(userId uint, params models.TaskFilter) ([]models.Task, error) {
+func GetTasksByUserId(projectId uint, params models.TaskFilter) ([]models.Task, error) {
 	var tasks []models.Task
-	query := database.DB.Where("user_id = ?", userId).Preload("User")
+	query := database.DB.Where("project_id = ?", projectId).Preload("Project")
 	if params.Title != "" {
 		query = query.Where("title LIKE ?", "%"+params.Title+"%") // Using LIKE for case-insensitive search
 	}

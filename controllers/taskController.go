@@ -18,16 +18,28 @@ type AssignLabelRequest struct {
 	LabelID uint `json:"label_id" validate:"required"`
 }
 
-func GetTasksByUserId(c *fiber.Ctx) error {
+func GetTasksByProject(c *fiber.Ctx) error {
 	// Extract categoryId from query parameters
-	userId := c.Locals("userId").(uint)
+	projectIdStr := c.Query("projectId")
+	if projectIdStr == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "project id is required",
+		})
+	}
+	// Convert categoryId from string to uint
+	projectId, err := strconv.ParseUint(projectIdStr, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid project id",
+		})
+	}
 	filter := models.TaskFilter{
 		Title:  c.Query("title"),
 		Status: c.Query("status"),
 		Label:  c.Query("label"),
 	}
 	// Call the service to get tasks by user
-	tasks, err := services.GetTasksByUserId(userId, filter)
+	tasks, err := services.GetTasksByUserId(uint(projectId), filter)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -35,10 +47,9 @@ func GetTasksByUserId(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "get tasks successfully",
-		"tasks":   tasks,
-		"userId":  userId,
-		"filter":  filter,
+		"message":   "get tasks successfully",
+		"tasks":     tasks,
+		"projectId": projectId,
 	})
 }
 
