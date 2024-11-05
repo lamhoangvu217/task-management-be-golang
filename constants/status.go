@@ -11,3 +11,8 @@ const (
 	TaskPriorityMedium = "medium"
 	TaskPriorityHigh   = "high"
 )
+
+const (
+	ProjectStatusActive   = "active"
+	ProjectStatusInActive = "inactive"
+)

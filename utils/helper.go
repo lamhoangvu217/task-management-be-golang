@@ -59,3 +59,7 @@ func IsValidTaskStatus(status string) bool {
 func IsValidTaskPriority(priority string) bool {
 	return priority == constants.TaskPriorityLow || priority == constants.TaskPriorityMedium || priority == constants.TaskPriorityHigh
 }
+
+func IsValidProjectStatus(status string) bool {
+	return status == constants.ProjectStatusActive || status == constants.ProjectStatusInActive
+}

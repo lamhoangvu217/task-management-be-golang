@@ -14,6 +14,9 @@ func Setup(app *fiber.App) {
 	app.Get("/api/user-detail", middlewares.AuthRequired, controllers.GetUserDetail)
 
 	authorizedApp := app.Group("/app", middlewares.AuthRequired)
+
+	authorizedApp.Post("/project", controllers.CreateProject)
+
 	authorizedApp.Get("/tasks", controllers.GetTasksByUserId)
 	authorizedApp.Post("/task", controllers.CreateTask)
 	authorizedApp.Delete("/task/:id", controllers.DeleteTask)

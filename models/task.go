@@ -9,11 +9,17 @@ type Task struct {
 	Status      string    `gorm:"type:text; not null" json:"status" default:"todo"`
 	Priority    string    `gorm:"type:text; not null" json:"priority" default:"low"`
 	DueDate     time.Time `json:"dueDate"`
-	UserID      uint      `gorm:"not null" json:"userId"`
-	User        User      `gorm:"foreignKey:UserID" json:"-"`
 	Subtasks    []Subtask `json:"-"`
 	Labels      []Label   `gorm:"many2many:task_labels;" json:"-"`
 	Comments    []Comment `json:"-"`
+	ProjectID   uint      `json:"project_id"`
+	Project     Project   `gorm:"foreignKey:ProjectID"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+}
+type TaskFilter struct {
+	Title    string `json:"title"`
+	Status   string `json:"status"`
+	Label    string `json:"label"`
+	Priority string `json:"priority"`
 }

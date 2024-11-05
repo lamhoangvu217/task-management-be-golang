@@ -21,27 +21,28 @@ type AssignLabelRequest struct {
 func GetTasksByUserId(c *fiber.Ctx) error {
 	// Extract categoryId from query parameters
 	userId := c.Locals("userId").(uint)
+	filter := models.TaskFilter{
+		Title:  c.Query("title"),
+		Status: c.Query("status"),
+		Label:  c.Query("label"),
+	}
 	// Call the service to get tasks by user
-	tasks, err := services.GetTasksByUserId(userId)
+	tasks, err := services.GetTasksByUserId(userId, filter)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
+
 	return c.JSON(fiber.Map{
 		"message": "get tasks successfully",
 		"tasks":   tasks,
 		"userId":  userId,
+		"filter":  filter,
 	})
 }
 
 func CreateTask(c *fiber.Ctx) error {
-	userId, ok := c.Locals("userId").(uint)
-	if !ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid user ID",
-		})
-	}
 	task := new(models.Task)
 	if err := c.BodyParser(task); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -58,7 +59,6 @@ func CreateTask(c *fiber.Ctx) error {
 			"error": "task priority is invalid",
 		})
 	}
-	task.UserID = userId
 	task.CreatedAt = time.Now()
 	task.UpdatedAt = time.Now()
 	task.DueDate = time.Now()

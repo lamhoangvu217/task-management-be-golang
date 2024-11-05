@@ -7,9 +7,22 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetTasksByUserId(userId uint) ([]models.Task, error) {
+func GetTasksByUserId(userId uint, params models.TaskFilter) ([]models.Task, error) {
 	var tasks []models.Task
-	if err := database.DB.Where("user_id = ?", userId).Preload("User").Find(&tasks).Error; err != nil {
+	query := database.DB.Where("user_id = ?", userId).Preload("User")
+	if params.Title != "" {
+		query = query.Where("title LIKE ?", "%"+params.Title+"%") // Using LIKE for case-insensitive search
+	}
+	if params.Status != "" {
+		query = query.Where("status = ?", params.Status)
+	}
+	if params.Label != "" {
+		query = query.Where("label = ?", params.Label)
+	}
+	if params.Priority != "" {
+		query = query.Where("priority = ?", params.Priority)
+	}
+	if err := query.Find(&tasks).Error; err != nil {
 		return nil, err
 	}
 	return tasks, nil

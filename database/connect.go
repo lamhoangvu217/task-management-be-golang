@@ -39,5 +39,6 @@ func Connect() {
 		&models.Subtask{},
 		&models.Label{},
 		&models.Comment{},
+		&models.Project{},
 	)
 }
