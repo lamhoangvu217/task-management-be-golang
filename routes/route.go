@@ -38,4 +38,9 @@ func Setup(app *fiber.App) {
 	authorizedApp.Post("/comment", controllers.CreateComment)
 	authorizedApp.Get("/comments", controllers.GetCommentByUser)
 	authorizedApp.Delete("/comment/:id", controllers.DeleteComment)
+	authorizedApp.Get("/roles", controllers.GetAllRoles)
+
+	admin := app.Group("/admin", middlewares.AuthRequired)
+	admin.Post("/role", controllers.CreateRole)
+	admin.Delete("/role/:id", controllers.DeleteRole)
 }

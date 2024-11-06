@@ -10,7 +10,8 @@ type User struct {
 	Email     string    `gorm:"unique;not null" json:"email"`
 	FullName  string    `gorm:"size:255;not null" json:"fullName"`
 	Password  []byte    `gorm:"not null" json:"password" validate:"required,min=8"`
-	Role      string    `gorm:"not null" json:"role" validate:"required" default:"user"`
+	RoleID    uint      `json:"roleId"`
+	Role      Role      `gorm:"foreignKey:RoleID"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
