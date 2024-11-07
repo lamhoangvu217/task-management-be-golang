@@ -34,7 +34,7 @@ func CreateProject(c *fiber.Ctx) error {
 	}
 	project.CreatedAt = time.Now()
 	project.UpdatedAt = time.Now()
-	project.UserID = userId
+	project.OwnerID = userId
 
 	createdProject, err := services.CreateProject(project)
 	if err != nil {
@@ -44,7 +44,7 @@ func CreateProject(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"message": "project created successfully",
-		"task":    createdProject,
+		"project": createdProject,
 	})
 }
 
@@ -58,7 +58,8 @@ func GetProjectByUserId(c *fiber.Ctx) error {
 	projects, err := services.GetProjectByUserId(userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"error":  err.Error(),
+			"userId": userId,
 		})
 	}
 

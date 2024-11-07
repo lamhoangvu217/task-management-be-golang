@@ -78,23 +78,23 @@ func DeleteRole(c *fiber.Ctx) error {
 	})
 }
 
-func AssignRoleToUser(c *fiber.Ctx) error {
-	// check if user take action has admin role
-	userEmail := c.Locals("userEmail")
-	if userEmail == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
-	}
-	// Retrieve user details from the database
-	var user models.User
-	if err := database.DB.Where("email = ?", userEmail).First(&user).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "User not found",
-			"email":   userEmail,
-		})
-	}
-	if user.Role.Name == "admin" {
-
-	}
-}
+//func AssignRoleToUser(c *fiber.Ctx) error {
+//	// check if user take action has admin role
+//	userEmail := c.Locals("userEmail")
+//	if userEmail == "" {
+//		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+//			"message": "Unauthorized",
+//		})
+//	}
+//	// Retrieve user details from the database
+//	var user models.User
+//	if err := database.DB.Where("email = ?", userEmail).First(&user).Error; err != nil {
+//		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+//			"message": "User not found",
+//			"email":   userEmail,
+//		})
+//	}
+//	if user.Role.Name == "admin" {
+//
+//	}
+//}

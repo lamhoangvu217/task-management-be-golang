@@ -14,7 +14,7 @@ func CreateProject(project *models.Project) (*models.Project, error) {
 
 func GetProjectByUserId(userId uint) ([]models.Project, error) {
 	var projects []models.Project
-	query := database.DB.Where("user_id = ?", userId).Preload("User").Preload("Collaborators")
+	query := database.DB.Where("owner_id = ?", userId).Preload("Users")
 	if err := query.Find(&projects).Error; err != nil {
 		return nil, err
 	}

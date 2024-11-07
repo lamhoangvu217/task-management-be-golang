@@ -42,5 +42,6 @@ func Connect() {
 		&models.Project{},
 		&models.Role{},
 		&models.Permission{},
+		&models.UserProjectRole{},
 	)
 }
