@@ -26,3 +26,7 @@ func DeleteRole(role *models.Role, roleId uint) error {
 	}
 	return nil
 }
+
+//func AssignRoleToUser() error {
+//
+//}

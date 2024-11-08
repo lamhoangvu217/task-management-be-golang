@@ -39,7 +39,7 @@ func GetTasksByProject(c *fiber.Ctx) error {
 		Label:  c.Query("label"),
 	}
 	// Call the service to get tasks by user
-	tasks, err := services.GetTasksByUserId(uint(projectId), filter)
+	tasks, err := services.GetTasksByProjectId(uint(projectId), filter)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),

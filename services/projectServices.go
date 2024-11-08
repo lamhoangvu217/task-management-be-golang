@@ -20,3 +20,10 @@ func GetProjectByUserId(userId uint) ([]models.Project, error) {
 	}
 	return projects, nil
 }
+
+func AddCollaboratorToProject(res *models.UserProjectRole) (*models.UserProjectRole, error) {
+	if err := database.DB.Create(&res).Error; err != nil {
+		return nil, err
+	}
+	return res, nil
+}

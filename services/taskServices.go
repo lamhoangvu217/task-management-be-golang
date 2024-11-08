@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetTasksByUserId(projectId uint, params models.TaskFilter) ([]models.Task, error) {
+func GetTasksByProjectId(projectId uint, params models.TaskFilter) ([]models.Task, error) {
 	var tasks []models.Task
 	query := database.DB.Where("project_id = ?", projectId).Preload("Project")
 	if params.Title != "" {

@@ -9,18 +9,19 @@ type User struct {
 	ID        uint              `gorm:"primaryKey;autoIncrement" json:"id"`
 	Email     string            `gorm:"unique;not null" json:"email"`
 	FullName  string            `gorm:"size:255;not null" json:"fullName"`
-	Password  []byte            `gorm:"not null" json:"password" validate:"required,min=8"`
-	Projects  []UserProjectRole `gorm:"foreignKey:UserID" json:"-"`
+	Password  []byte            `gorm:"not null" json:"-" validate:"required,min=8"`
+	Projects  []UserProjectRole `gorm:"foreignKey:UserID" json:"projects"`
 	CreatedAt time.Time         `json:"createdAt"`
 	UpdatedAt time.Time         `json:"updatedAt"`
 }
 type UserProjectRole struct {
-	UserID    uint    `gorm:"primaryKey" json:"userId"`
-	ProjectID uint    `gorm:"primaryKey" json:"projectId"`
+	ID        uint    `gorm:"primaryKey;autoIncrement" json:"id"`
+	UserID    uint    `json:"userId"`
+	ProjectID uint    `json:"projectId"`
 	RoleID    uint    `json:"roleId"`
-	User      User    `gorm:"foreignKey:UserID"`
-	Project   Project `gorm:"foreignKey:ProjectID"`
-	Role      Role    `gorm:"foreignKey:RoleID"`
+	User      User    `gorm:"foreignKey:UserID" json:"-"`
+	Project   Project `gorm:"foreignKey:ProjectID" json:"-"`
+	Role      Role    `gorm:"foreignKey:RoleID" json:"-"`
 }
 
 func (user *User) SetPassword(password string) error {

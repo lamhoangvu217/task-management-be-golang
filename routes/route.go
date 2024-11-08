@@ -11,13 +11,16 @@ func Setup(app *fiber.App) {
 	app.Post("/api/login", controllers.Login)
 	app.Post("/api/logout", controllers.Logout)
 
-	app.Get("/api/user-detail", middlewares.AuthRequired, controllers.GetUserDetail)
-
 	authorizedApp := app.Group("/app", middlewares.AuthRequired)
+
+	authorizedApp.Get("/user-detail", controllers.GetUserDetail)
+	authorizedApp.Put("/user", controllers.UpdateUserDetail)
 
 	authorizedApp.Post("/project", controllers.CreateProject)
 	authorizedApp.Get("/projects", controllers.GetProjectByUserId)
 	authorizedApp.Post("/add-collaborator", controllers.AddCollaboratorToProject)
+	authorizedApp.Get("collaborators", controllers.GetCollaboratorsByProjectId)
+	authorizedApp.Put("/remove-collaborator", controllers.UpdateCollaboratorFromProject)
 
 	authorizedApp.Get("/tasks", controllers.GetTasksByProject)
 	authorizedApp.Post("/task", controllers.CreateTask)
@@ -43,4 +46,5 @@ func Setup(app *fiber.App) {
 	admin := app.Group("/admin", middlewares.AuthRequired)
 	admin.Post("/role", controllers.CreateRole)
 	admin.Delete("/role/:id", controllers.DeleteRole)
+	admin.Get("/users", controllers.GetUsers)
 }

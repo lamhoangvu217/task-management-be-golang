@@ -12,6 +12,12 @@ import (
 type AddCollaboratorRequest struct {
 	ProjectID uint `json:"project_id" validate:"required"`
 	UserID    uint `json:"user_id" validate:"required"`
+	RoleID    uint `json:"role_id" validate:"required"`
+}
+
+type UpdateCollaboratorRequest struct {
+	UserID    uint `json:"user_id" validate:"required"`
+	ProjectID uint `json:"project_id" validate:"required"`
 }
 
 func CreateProject(c *fiber.Ctx) error {
@@ -71,7 +77,7 @@ func GetProjectByUserId(c *fiber.Ctx) error {
 }
 
 func AddCollaboratorToProject(c *fiber.Ctx) error {
-	var req AddCollaboratorRequest
+	var req models.UserProjectRole
 	// Parse the JSON body
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
@@ -81,14 +87,40 @@ func AddCollaboratorToProject(c *fiber.Ctx) error {
 	if err := database.DB.First(&project, req.ProjectID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Project not found"})
 	}
-	// Find the label
-	var user models.User
+	// Find the user
+	var user *models.User
 	if err := database.DB.First(&user, req.UserID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
-	// Associate the label with the task
-	if err := database.DB.Model(&project).Association("Collaborators").Append(&user); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+
+	// Find role
+	var role models.Role
+	if err := database.DB.First(&role, req.RoleID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Role not found"})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User added to project successfully"})
+	res, err := services.AddCollaboratorToProject(&req)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User added to project successfully", "user": res})
+}
+
+func UpdateCollaboratorFromProject(c *fiber.Ctx) error {
+	var bodyReq UpdateCollaboratorRequest
+	if err := c.BodyParser(&bodyReq); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid input data",
+		})
+	}
+	if err := services.UpdateCollaboratorInProject(bodyReq.ProjectID, bodyReq.UserID); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to remove collaborator",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "remove collaborator successfully",
+	})
 }
