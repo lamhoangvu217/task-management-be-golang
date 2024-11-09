@@ -12,16 +12,9 @@ import (
 
 func main() {
 	database.Connect()
-	if os.Getenv("ENV") != "production" {
-		err := godotenv.Load(".env.local")
-		if err != nil {
-			log.Fatal("Error loading .env.local file")
-		}
-	} else {
-		err := godotenv.Load(".env.production")
-		if err != nil {
-			log.Fatal("Error loading .env.production file")
-		}
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 	port := os.Getenv("PORT")
 	app := fiber.New()
