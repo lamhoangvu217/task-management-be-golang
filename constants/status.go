@@ -7,6 +7,12 @@ const (
 )
 
 const (
+	SubtaskStatusTodo  = "todo"
+	SubtaskStatusDoing = "doing"
+	SubtaskStatusDone  = "done"
+)
+
+const (
 	TaskPriorityLow    = "low"
 	TaskPriorityMedium = "medium"
 	TaskPriorityHigh   = "high"

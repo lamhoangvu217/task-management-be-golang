@@ -30,3 +30,10 @@ func DeleteLabel(label *models.Label, labelId uint) error {
 	}
 	return nil
 }
+
+func UpdateLabel(updatedLabel *models.Label) error {
+	if err := database.DB.Save(&updatedLabel).Error; err != nil {
+		return err
+	}
+	return nil
+}

@@ -26,3 +26,18 @@ func DeleteComment(comment *models.Comment, commentId uint) error {
 	}
 	return nil
 }
+
+func UpdateComment(updatedComment *models.Comment) error {
+	if err := database.DB.Save(&updatedComment).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetAllCommentInTask(taskId uint) ([]models.Comment, error) {
+	var comments []models.Comment
+	if err := database.DB.Where("task_id = ?", taskId).Preload("Task").Find(&comments).Error; err != nil {
+		return nil, err
+	}
+	return comments, nil
+}

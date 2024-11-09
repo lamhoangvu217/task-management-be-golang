@@ -6,6 +6,7 @@ import (
 	"github.com/lamhoangvu217/task-management-be-golang/database"
 	"github.com/lamhoangvu217/task-management-be-golang/models"
 	"github.com/lamhoangvu217/task-management-be-golang/services"
+	"github.com/lamhoangvu217/task-management-be-golang/utils"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -45,6 +46,11 @@ func CreateSubtask(c *fiber.Ctx) error {
 	if err := c.BodyParser(subtask); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid input data",
+		})
+	}
+	if !utils.IsValidSubtaskStatus(subtask.Status) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "subtask status is invalid",
 		})
 	}
 	subtask.CreatedAt = time.Now()

@@ -56,6 +56,10 @@ func IsValidTaskStatus(status string) bool {
 	return status == constants.TaskStatusTodo || status == constants.TaskStatusDoing || status == constants.TaskStatusDone
 }
 
+func IsValidSubtaskStatus(status string) bool {
+	return status == constants.SubtaskStatusTodo || status == constants.SubtaskStatusDoing || status == constants.SubtaskStatusDone
+}
+
 func IsValidTaskPriority(priority string) bool {
 	return priority == constants.TaskPriorityLow || priority == constants.TaskPriorityMedium || priority == constants.TaskPriorityHigh
 }

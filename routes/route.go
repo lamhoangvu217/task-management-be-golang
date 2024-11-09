@@ -37,10 +37,13 @@ func Setup(app *fiber.App) {
 	authorizedApp.Post("/assign-label", controllers.AssignLabelToTask)
 	authorizedApp.Post("/remove-assign-label", controllers.RemoveLabelFromTask)
 	authorizedApp.Delete("/label/:id", controllers.DeleteLabel)
+	authorizedApp.Put("/label/:id", controllers.UpdateLabel)
 
 	authorizedApp.Post("/comment", controllers.CreateComment)
-	authorizedApp.Get("/comments", controllers.GetCommentByUser)
+	authorizedApp.Get("/comments-by-user", controllers.GetCommentByUser)
 	authorizedApp.Delete("/comment/:id", controllers.DeleteComment)
+	authorizedApp.Get("/comments-in-task", controllers.GetAllCommentInTask)
+	authorizedApp.Put("/comment/:id", controllers.UpdateComment)
 	authorizedApp.Get("/roles", controllers.GetAllRoles)
 
 	admin := app.Group("/admin", middlewares.AuthRequired)
