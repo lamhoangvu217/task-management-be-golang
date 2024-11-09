@@ -4,6 +4,8 @@ A Task Management App. Work anywhere, anytime with Tasky
 
 ## Tech Stack
 **Server:** Go, GORM, Fiber
+
+
 **Database:** MySQL
 
 ## Installation
