@@ -11,6 +11,8 @@ type User struct {
 	FullName  string            `gorm:"size:255;not null" json:"fullName"`
 	Password  []byte            `gorm:"not null" json:"-" validate:"required,min=8"`
 	Projects  []UserProjectRole `gorm:"foreignKey:UserID" json:"projects"`
+	PlanID    uint              `gorm:"not null" json:"planId"`
+	Plan      Plan              `gorm:"foreignKey:PlanID" json:"-"`
 	CreatedAt time.Time         `json:"createdAt"`
 	UpdatedAt time.Time         `json:"updatedAt"`
 }

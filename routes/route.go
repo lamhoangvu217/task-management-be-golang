@@ -10,6 +10,7 @@ func Setup(app *fiber.App) {
 	app.Post("/api/register", controllers.Register)
 	app.Post("/api/login", controllers.Login)
 	app.Post("/api/logout", controllers.Logout)
+	app.Get("/api/plans", controllers.GetAllPlans)
 
 	authorizedApp := app.Group("/app", middlewares.AuthRequired)
 
@@ -21,6 +22,7 @@ func Setup(app *fiber.App) {
 	authorizedApp.Post("/add-collaborator", controllers.AddCollaboratorToProject)
 	authorizedApp.Get("collaborators", controllers.GetCollaboratorsByProjectId)
 	authorizedApp.Put("/remove-collaborator", controllers.UpdateCollaboratorFromProject)
+	authorizedApp.Get("/project/:id", controllers.GetProjectById)
 
 	authorizedApp.Get("/tasks", controllers.GetTasksByProject)
 	authorizedApp.Post("/task", controllers.CreateTask)
@@ -46,8 +48,15 @@ func Setup(app *fiber.App) {
 	authorizedApp.Put("/comment/:id", controllers.UpdateComment)
 	authorizedApp.Get("/roles", controllers.GetAllRoles)
 
+	authorizedApp.Post("/subscribe-plan", controllers.SubscribePlan)
+	authorizedApp.Get("/current-user-plan", controllers.GetCurrentUserPlan)
+
 	admin := app.Group("/admin", middlewares.AuthRequired)
 	admin.Post("/role", controllers.CreateRole)
 	admin.Delete("/role/:id", controllers.DeleteRole)
 	admin.Get("/users", controllers.GetUsers)
+
+	admin.Post("/plan", controllers.CreatePlan)
+	admin.Delete("/plan/:id", controllers.DeletePlan)
+	admin.Put("/plan/:id", controllers.UpdatePlan)
 }

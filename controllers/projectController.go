@@ -6,6 +6,7 @@ import (
 	"github.com/lamhoangvu217/task-management-be-golang/models"
 	"github.com/lamhoangvu217/task-management-be-golang/services"
 	"github.com/lamhoangvu217/task-management-be-golang/utils"
+	"strconv"
 	"time"
 )
 
@@ -122,5 +123,37 @@ func UpdateCollaboratorFromProject(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"message": "remove collaborator successfully",
+	})
+}
+
+func GetProjectById(c *fiber.Ctx) error {
+	userId, ok := c.Locals("userId").(uint)
+	if !ok {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid user ID",
+		})
+	}
+	projectIdStr := c.Params("id")
+	if projectIdStr == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "project id is required",
+		})
+	}
+	// Convert categoryId from string to uint
+	projectId, err := strconv.ParseUint(projectIdStr, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid project id",
+		})
+	}
+	project, err := services.GetUserProjectById(uint(projectId), userId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "get project successfully",
+		"project": project,
 	})
 }

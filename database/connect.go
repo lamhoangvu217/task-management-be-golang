@@ -34,6 +34,7 @@ func Connect() {
 		&models.Comment{},
 		&models.Project{},
 		&models.Role{},
+		&models.Plan{},
 		&models.Permission{},
 		&models.UserProjectRole{},
 	)
